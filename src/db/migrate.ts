@@ -88,21 +88,7 @@ const migrations = [
   )
   `,
   `CREATE INDEX IF NOT EXISTS incidents_monitor_id_idx ON incidents(monitor_id)`,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async () => {
-    // Use dynamic SQL to avoid syntax issues with older PostgreSQL versions
-    await pool.query(`
-      DO $$
-      BEGIN
-        IF NOT EXISTS (
-          SELECT 1 FROM information_schema.columns 
-          WHERE table_name = 'monitors' AND column_name = 'ignore_tls'
-        ) THEN
-          ALTER TABLE monitors ADD COLUMN ignore_tls BOOLEAN NOT NULL DEFAULT FALSE;
-        END IF;
-      END $$;
-    `);
-  },
+  `ALTER TABLE monitors ADD COLUMN IF NOT EXISTS ignore_tls BOOLEAN NOT NULL DEFAULT FALSE`,
 ];
 
 export async function runMigrations(): Promise<void> {
@@ -124,12 +110,7 @@ export async function runMigrations(): Promise<void> {
         [version]
       );
       if (rows.length === 0) {
-        const migration = migrations[i];
-        if (typeof migration === "function") {
-          await migration();
-        } else {
-          await client.query(migration);
-        }
+        await client.query(migrations[i]);
         await client.query(
           "INSERT INTO schema_migrations (version) VALUES ($1)",
           [version]
