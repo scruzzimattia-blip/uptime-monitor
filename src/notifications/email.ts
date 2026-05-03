@@ -17,7 +17,7 @@ export async function sendEmail(
   monitor: Monitor,
   result: CheckResult
 ): Promise<void> {
-  const { host, port, secure, username, password, from, to } = config as EmailConfig;
+  const { host, port, secure, username, password, from, to } = config as unknown as EmailConfig;
   if (!host || !to) throw new Error("Missing required email config: host, to");
 
   const transporter = nodemailer.createTransport({

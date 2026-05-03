@@ -10,7 +10,7 @@ export async function sendDiscord(
   monitor: Monitor,
   result: CheckResult
 ): Promise<void> {
-  const { webhookUrl } = config as DiscordConfig;
+  const { webhookUrl } = config as unknown as DiscordConfig;
   if (!webhookUrl) throw new Error("Missing Discord webhookUrl");
 
   const color = result.status === 1 ? 0x2ecc71 : 0xe74c3c;

@@ -12,7 +12,7 @@ export async function sendTelegram(
   monitor: Monitor,
   result: CheckResult
 ): Promise<void> {
-  const { botToken, chatId } = config as TelegramConfig;
+  const { botToken, chatId } = config as unknown as TelegramConfig;
   if (!botToken || !chatId) throw new Error("Missing Telegram botToken or chatId");
 
   const text = buildMessage(monitor, result);

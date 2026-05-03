@@ -13,7 +13,7 @@ export async function sendWebhook(
   monitor: Monitor,
   result: CheckResult
 ): Promise<void> {
-  const { url, method = "POST", headers = {}, bodyTemplate } = config as WebhookConfig;
+  const { url, method = "POST", headers = {}, bodyTemplate } = config as unknown as WebhookConfig;
   if (!url) throw new Error("Missing webhook url");
 
   const defaultPayload = {
