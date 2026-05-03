@@ -4,6 +4,7 @@ import { createServer } from "http";
 import { Server as SocketServer } from "socket.io";
 import cors from "cors";
 import path from "path";
+import fs from "fs";
 import bcrypt from "bcrypt";
 
 import { env } from "./config/env";
@@ -63,13 +64,14 @@ async function bootstrap(): Promise<void> {
   app.use("/api/status-pages", statusPagesRouter);
   app.use("/api/status", publicStatusRouter);
 
-  // Serve frontend in production
-  if (env.NODE_ENV === "production") {
-    const frontendDist = path.join(__dirname, "..", "frontend", "dist");
+  // Serve frontend if the built dist directory exists
+  const frontendDist = path.join(__dirname, "..", "frontend", "dist");
+  if (fs.existsSync(frontendDist)) {
     app.use(express.static(frontendDist));
     app.get("*", (_req, res) => {
       res.sendFile(path.join(frontendDist, "index.html"));
     });
+    console.log("Serving frontend from", frontendDist);
   }
 
   setupWebSocket(io);
