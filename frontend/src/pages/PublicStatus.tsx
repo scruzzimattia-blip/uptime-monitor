@@ -96,7 +96,7 @@ export default function PublicStatus() {
                 <StatusDot status={m.currentStatus} />
                 <span style={{ fontWeight: 600, fontSize: 15 }}>{m.name}</span>
               </div>
-              <div style={{ display: "flex", align: "center", gap: 16, fontSize: 13 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 13 }}>
                 {m.uptime30d != null && (
                   <span style={{ color: "var(--text-muted)" }}>
                     30d: <strong style={{ color: m.uptime30d >= 99 ? "var(--green)" : m.uptime30d >= 90 ? "var(--yellow)" : "var(--red)" }}>
