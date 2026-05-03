@@ -8,10 +8,11 @@ import { sendTelegram } from "../notifications/telegram";
 import { sendDiscord } from "../notifications/discord";
 import { sendEmail } from "../notifications/email";
 import { sendWebhook } from "../notifications/webhook";
+import { sendNtfy } from "../notifications/ntfy";
 
 const notificationSchema = z.object({
   name: z.string().min(1).max(255),
-  type: z.enum(["telegram", "discord", "email", "webhook"]),
+  type: z.enum(["telegram", "discord", "email", "webhook", "ntfy"]),
   config: z.record(z.unknown()),
   active: z.boolean().default(true),
 });
@@ -106,6 +107,9 @@ router.post("/test", async (req, res) => {
         break;
       case "webhook":
         await sendWebhook(config as Record<string, unknown>, testMonitor, testResult);
+        break;
+      case "ntfy":
+        await sendNtfy(config as Record<string, unknown>, testMonitor, testResult);
         break;
     }
     res.json({ success: true });

@@ -1,15 +1,19 @@
 import { type Monitor } from "../lib/api";
 import StatusDot from "./StatusDot";
 
+import type { Notification } from "../lib/api";
+
 interface Props {
   monitors: Monitor[];
   selectedId: number | null;
   onSelect: (id: number) => void;
   onAdd: () => void;
   onLogout: () => void;
+  notificationCount: number;
+  onOpenNotifications: () => void;
 }
 
-export default function Sidebar({ monitors, selectedId, onSelect, onAdd, onLogout }: Props) {
+export default function Sidebar({ monitors, selectedId, onSelect, onAdd, onLogout, notificationCount, onOpenNotifications }: Props) {
   const upCount   = monitors.filter((m) => m.currentStatus === 1).length;
   const downCount = monitors.filter((m) => m.currentStatus === 0).length;
 
@@ -35,6 +39,26 @@ export default function Sidebar({ monitors, selectedId, onSelect, onAdd, onLogou
             boxShadow: "0 2px 8px rgba(79,128,255,0.4)",
           }}>⬆</div>
           <span style={{ fontWeight: 700, fontSize: 14, letterSpacing: "-0.2px" }}>Uptime Monitor</span>
+          <button
+            onClick={onOpenNotifications}
+            style={{
+              marginLeft: "auto", background: "var(--bg3)", border: "1px solid var(--border)",
+              borderRadius: 6, padding: "4px 8px", cursor: "pointer", position: "relative",
+              fontSize: 14, lineHeight: 1,
+            }}
+            title="Notifications"
+          >
+            🔔
+            {notificationCount > 0 && (
+              <span style={{
+                position: "absolute", top: -4, right: -4, background: "var(--blue)",
+                color: "white", borderRadius: 8, fontSize: 9, padding: "1px 4px",
+                fontWeight: 700, minWidth: 14, textAlign: "center",
+              }}>
+                {notificationCount}
+              </span>
+            )}
+          </button>
         </div>
 
         {/* Summary pills */}

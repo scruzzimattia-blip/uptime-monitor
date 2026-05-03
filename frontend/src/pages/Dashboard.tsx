@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useMonitors } from "../hooks/useMonitors";
+import { useNotifications } from "../hooks/useNotifications";
 import Sidebar from "../components/Sidebar";
 import MonitorDetail from "./MonitorDetail";
 import MonitorModal from "../components/MonitorModal";
+import NotificationModal from "../components/NotificationModal";
 import { disconnectSocket } from "../lib/socket";
 
 interface Props {
@@ -11,8 +13,10 @@ interface Props {
 
 export default function Dashboard({ onLogout }: Props) {
   const { monitors, loading, refetch } = useMonitors();
+  const { notifications, refetch: refetchNotifications } = useNotifications();
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [addOpen, setAddOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -31,12 +35,22 @@ export default function Dashboard({ onLogout }: Props) {
         />
       )}
 
+      {notifOpen && (
+        <NotificationModal
+          notifications={notifications}
+          onClose={() => setNotifOpen(false)}
+          onSaved={() => refetchNotifications()}
+        />
+      )}
+
       <Sidebar
         monitors={monitors}
         selectedId={selectedId}
         onSelect={setSelectedId}
         onAdd={() => setAddOpen(true)}
         onLogout={handleLogout}
+        notificationCount={notifications.length}
+        onOpenNotifications={() => setNotifOpen(true)}
       />
 
       <main style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column", background: "var(--bg)" }}>

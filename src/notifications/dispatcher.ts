@@ -6,6 +6,7 @@ import { sendTelegram } from "./telegram";
 import { sendDiscord } from "./discord";
 import { sendEmail } from "./email";
 import { sendWebhook } from "./webhook";
+import { sendNtfy } from "./ntfy";
 export { buildMessage } from "./format";
 
 export async function sendNotifications(monitor: Monitor, result: CheckResult): Promise<void> {
@@ -32,6 +33,9 @@ export async function sendNotifications(monitor: Monitor, result: CheckResult): 
           break;
         case "webhook":
           await sendWebhook(config, monitor, result);
+          break;
+        case "ntfy":
+          await sendNtfy(config, monitor, result);
           break;
       }
     } catch (err) {
