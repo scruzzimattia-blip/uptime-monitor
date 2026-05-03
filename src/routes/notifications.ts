@@ -13,7 +13,7 @@ import { sendNtfy } from "../notifications/ntfy";
 const notificationSchema = z.object({
   name: z.string().min(1).max(255),
   type: z.enum(["telegram", "discord", "email", "webhook", "ntfy"]),
-  config: z.object({}),
+  config: z.any(),
   active: z.boolean().default(true),
 });
 
