@@ -13,7 +13,7 @@ import { sendNtfy } from "../notifications/ntfy";
 const notificationSchema = z.object({
   name: z.string().min(1).max(255),
   type: z.enum(["telegram", "discord", "email", "webhook", "ntfy"]),
-  config: z.any(),
+  config: z.any().optional(),
   active: z.boolean().default(true),
 });
 
@@ -54,7 +54,7 @@ router.post("/", async (req, res) => {
     return;
   }
 
-  const [created] = await db.insert(notifications).values(parsed.data).returning();
+  const [created] = await db.insert(notifications).values({ ...parsed.data, config: parsed.data.config ?? {} }).returning();
   res.status(201).json(created);
 });
 
