@@ -1,4 +1,5 @@
 import axios, { AxiosError } from "axios";
+import https from "https";
 import type { Monitor, CheckResult } from "../types";
 
 function matchesStatusCode(code: number, pattern: string): boolean {
@@ -21,8 +22,11 @@ export async function checkHttp(monitor: Monitor): Promise<CheckResult> {
       method: (monitor.method ?? "GET") as "GET",
       timeout: monitor.timeout * 1000,
       maxRedirects: monitor.maxRedirects ?? 10,
-      validateStatus: () => true, // don't throw on any status
+      validateStatus: () => true,
       headers: { "User-Agent": "UptimeMonitor/1.0" },
+      httpsAgent: monitor.ignoreTls
+        ? new https.Agent({ rejectUnauthorized: false })
+        : undefined,
     });
 
     const ping = Date.now() - start;

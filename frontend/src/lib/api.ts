@@ -36,6 +36,7 @@ export interface Monitor {
   dnsResolveType: string | null;
   dnsResolveServer: string | null;
   maxRedirects: number;
+  ignoreTls: boolean;
   createdAt: string;
   updatedAt: string;
   currentStatus: 0 | 1 | null;

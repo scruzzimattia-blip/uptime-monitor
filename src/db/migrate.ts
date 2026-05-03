@@ -88,6 +88,7 @@ const migrations = [
   )
   `,
   `CREATE INDEX IF NOT EXISTS incidents_monitor_id_idx ON incidents(monitor_id)`,
+  `ALTER TABLE monitors ADD COLUMN IF NOT EXISTS ignore_tls BOOLEAN NOT NULL DEFAULT FALSE`,
 ];
 
 export async function runMigrations(): Promise<void> {

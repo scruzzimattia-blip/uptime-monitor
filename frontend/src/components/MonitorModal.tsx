@@ -14,7 +14,7 @@ const TYPE_ICONS: Record<string, string> = {
 const DEFAULTS = {
   name: "", type: "http", url: "", interval: 60, timeout: 30, retries: 1,
   method: "GET", acceptedStatusCodes: "200-299", keyword: "",
-  dnsResolveType: "A", dnsResolveServer: "", maxRedirects: 10,
+  dnsResolveType: "A", dnsResolveServer: "", maxRedirects:10, ignoreTls: false,
 };
 
 export default function MonitorModal({ monitor, onClose, onSaved }: Props) {
@@ -31,6 +31,7 @@ export default function MonitorModal({ monitor, onClose, onSaved }: Props) {
     dnsResolveType:     monitor?.dnsResolveType     ?? DEFAULTS.dnsResolveType,
     dnsResolveServer:   monitor?.dnsResolveServer   ?? DEFAULTS.dnsResolveServer,
     maxRedirects:       monitor?.maxRedirects        ?? DEFAULTS.maxRedirects,
+    ignoreTls:          monitor?.ignoreTls           ?? DEFAULTS.ignoreTls,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -53,6 +54,7 @@ export default function MonitorModal({ monitor, onClose, onSaved }: Props) {
         keyword:           form.keyword || undefined,
         dnsResolveType:    form.type === "dns" ? form.dnsResolveType : undefined,
         dnsResolveServer:  form.type === "dns" && form.dnsResolveServer ? form.dnsResolveServer : undefined,
+        ignoreTls:         isHttp ? form.ignoreTls : undefined,
       };
       if (monitor) {
         await api.put(`/monitors/${monitor.id}`, payload);
@@ -174,6 +176,18 @@ export default function MonitorModal({ monitor, onClose, onSaved }: Props) {
                   <input type="number" min={0} max={20} value={form.maxRedirects}
                     onChange={(e) => set("maxRedirects", e.target.value)} />
                 </div>
+              </div>
+              <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 8 }}>
+                <input
+                  type="checkbox"
+                  id="ignoreTls"
+                  checked={form.ignoreTls}
+                  onChange={(e) => set("ignoreTls", e.target.checked)}
+                  style={{ width: 16, height: 16 }}
+                />
+                <label htmlFor="ignoreTls" style={{ fontSize: 13, color: "var(--text-muted)", cursor: "pointer" }}>
+                  Ignore invalid TLS certificate
+                </label>
               </div>
             </div>
           )}

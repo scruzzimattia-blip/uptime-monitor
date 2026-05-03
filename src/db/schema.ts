@@ -34,6 +34,7 @@ export const monitors = pgTable("monitors", {
   // DNS-specific
   dnsResolveType: varchar("dns_resolve_type", { length: 10 }),
   dnsResolveServer: varchar("dns_resolve_server", { length: 255 }),
+  ignoreTls: boolean("ignore_tls").notNull().default(false),
   // Notification
   maxRedirects: integer("max_redirects").default(10),
   createdAt: timestamp("created_at").defaultNow().notNull(),
