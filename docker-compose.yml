@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: uptime
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: uptime_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uptime -d uptime_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - uptime-net
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://uptime:${POSTGRES_PASSWORD:-password}@postgres:5432/uptime_db
+      JWT_SECRET: ${JWT_SECRET:-changeme_replace_in_production}
+      PORT: 3001
+      BCRYPT_ROUNDS: ${BCRYPT_ROUNDS:-10}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
+      NODE_ENV: production
+    ports:
+      - "${APP_PORT:-3001}:3001"
+    networks:
+      - uptime-net
+    cap_add:
+      - NET_RAW  # Required for ICMP ping
+
+volumes:
+  postgres_data:
+
+networks:
+  uptime-net:
+    driver: bridge
