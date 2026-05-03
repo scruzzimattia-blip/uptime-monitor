@@ -218,7 +218,7 @@ export default function MonitorModal({ monitor, onClose, onSaved }: Props) {
                 <label>{label}</label>
                 <input
                   type="number" min={min} max={max}
-                  value={form[key as keyof typeof form]}
+                  value={String(form[key as keyof typeof form])}
                   onChange={(e) => set(key as keyof typeof form, e.target.value)}
                 />
               </div>
