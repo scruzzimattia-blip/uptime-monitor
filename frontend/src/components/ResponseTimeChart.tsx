@@ -17,15 +17,24 @@ interface Props {
 }
 
 export default function ResponseTimeChart({ beats }: Props) {
-  const data = beats
-    .filter((b) => b.ping != null)
+  const data = [...beats]
+    .filter((b) => b.ping != null && b.status === 1)
     .slice(-60)
     .reverse();
+
+  if (data.length === 0) {
+    return (
+      <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)", fontSize: 12 }}>
+        No response time data
+      </div>
+    );
+  }
 
   const labels = data.map((b) =>
     new Date(b.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
   );
   const values = data.map((b) => b.ping!);
+  const avg = Math.round(values.reduce((a, b) => a + b, 0) / values.length);
 
   return (
     <Line
@@ -34,31 +43,57 @@ export default function ResponseTimeChart({ beats }: Props) {
         datasets: [
           {
             data: values,
-            borderColor: "#3b82f6",
-            backgroundColor: "rgba(59,130,246,0.1)",
+            borderColor: "#4f80ff",
+            backgroundColor: (ctx) => {
+              const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, ctx.chart.height);
+              gradient.addColorStop(0, "rgba(79,128,255,0.18)");
+              gradient.addColorStop(1, "rgba(79,128,255,0)");
+              return gradient;
+            },
             fill: true,
-            tension: 0.3,
+            tension: 0.4,
             pointRadius: 0,
-            borderWidth: 2,
+            pointHoverRadius: 4,
+            pointHoverBackgroundColor: "#4f80ff",
+            borderWidth: 1.5,
           },
         ],
       }}
       options={{
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { display: false }, tooltip: { mode: "index", intersect: false } },
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "rgba(24,28,46,0.95)",
+            borderColor: "rgba(46,52,80,1)",
+            borderWidth: 1,
+            titleColor: "#6b7599",
+            bodyColor: "#e8ecf4",
+            padding: 10,
+            callbacks: {
+              title: (items) => items[0]?.label ?? "",
+              label: (item) => ` ${item.raw}ms`,
+              afterBody: () => [`avg ${avg}ms`],
+            },
+          },
+        },
         scales: {
           x: {
-            ticks: { color: "#7c8db5", maxTicksLimit: 6, font: { size: 11 } },
-            grid: { color: "rgba(45,49,71,0.5)" },
+            ticks: { color: "#6b7599", maxTicksLimit: 8, font: { size: 10 } },
+            grid: { color: "rgba(37,42,64,0.6)" },
+            border: { display: false },
           },
           y: {
             ticks: {
-              color: "#7c8db5",
-              font: { size: 11 },
+              color: "#6b7599",
+              font: { size: 10 },
               callback: (v) => `${v}ms`,
+              maxTicksLimit: 5,
             },
-            grid: { color: "rgba(45,49,71,0.5)" },
+            grid: { color: "rgba(37,42,64,0.6)" },
+            border: { display: false },
             min: 0,
           },
         },
