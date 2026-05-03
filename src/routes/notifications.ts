@@ -34,6 +34,7 @@ const testMonitor = {
   dnsResolveType: null,
   dnsResolveServer: null,
   maxRedirects: 10,
+  ignoreTls: false,
   createdAt: new Date(),
   updatedAt: new Date(),
 };

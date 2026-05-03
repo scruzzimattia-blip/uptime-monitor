@@ -21,6 +21,7 @@ const monitorSchema = z.object({
   dnsResolveType: z.string().optional(),
   dnsResolveServer: z.string().optional(),
   maxRedirects: z.number().int().min(0).max(20).default(10),
+  ignoreTls: z.boolean().default(false),
 });
 
 export function createMonitorRouter(io: SocketServer): Router {
