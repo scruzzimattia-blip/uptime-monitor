@@ -10,7 +10,3 @@ services:
       - ./tsconfig.json:/app/tsconfig.json
     ports:
       - "3001:3001"
-
-  postgres:
-    ports:
-      - "5432:5432"
