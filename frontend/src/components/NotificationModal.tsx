@@ -84,8 +84,10 @@ export default function NotificationModal({ notifications, onClose, onSaved }: P
       onSaved();
       resetForm();
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      setError(msg ?? "Failed to save");
+      const data = (err as { response?: { data?: { error?: string; details?: unknown } } })?.response?.data;
+      const msg = data?.error ?? "Failed to save";
+      const details = data?.details;
+      setError(details ? `${msg}: ${JSON.stringify(details)}` : msg);
     } finally {
       setLoading(false);
     }
