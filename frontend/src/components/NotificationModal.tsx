@@ -37,8 +37,8 @@ const FIELDS: Record<string, { key: string; label: string; placeholder: string; 
   ntfy: [
     { key: "server", label: "Server", placeholder: "https://ntfy.sh" },
     { key: "topic", label: "Topic", placeholder: "my-topic" },
-    { key: "username", label: "Username (optional)", placeholder: "username", optional: true },
-    { key: "password", label: "Password (optional)", placeholder: "password", optional: true },
+    { key: "username", label: "Username", placeholder: "username", optional: true },
+    { key: "password", label: "Password", placeholder: "password", optional: true },
   ],
 };
 
@@ -63,7 +63,7 @@ export default function NotificationModal({ notifications, onClose, onSaved }: P
     setForm({
       name: n.name,
       type: n.type,
-      config: n.config as Record<string, string>,
+      config: (n.config || {}) as Record<string, string>,
       active: n.active,
     });
     setEditId(n.id);
